@@ -10,6 +10,11 @@
             padding: 0;
             background-color: black;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: white;
         }
         canvas {
             position: fixed;
@@ -20,19 +25,25 @@
             z-index: -1;
             pointer-events: none;
         }
-        .bar {
-            width: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            display: inline-block;
-            margin-right: 1px;
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #AAA);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #CCC;
         }
     </style>
 </head>
 <body>
 
+    <button id="playButton">Start</button>
     <canvas id="visualizerCanvas"></canvas>
     <audio id="audio" loop>
-        <source src="Super%20Ponybeat%20%20Discord%20%5BThe%20Original!%5D%20by%20Eurobeat.mp3" type="audio/mp3">
+        <source src="https://voucan.github.io/Super%20Ponybeat%20%20Discord%20%5BThe%20Original!%5D%20by%20Eurobeat.mp3" type="audio/mp3">
     </audio>
 
     <script>
@@ -54,7 +65,6 @@
             dataArray = new Uint8Array(analyser.frequencyBinCount);
             source.connect(analyser);
             analyser.connect(audioContext.destination);
-            audio.play();
             animate();
         }
 
@@ -63,17 +73,36 @@
             analyser.getByteFrequencyData(dataArray);
             const barWidth = (canvas.width / dataArray.length) * 2.5;
             let barHeight;
+            let x = 0;
+
             for (let i = 0; i < dataArray.length; i++) {
-                barHeight = dataArray[i] / 2.5 || 2.5;
-                ctx.fillStyle = `rgba(${barHeight * 2}, 50, 255 - barHeight, 0.5)`;
-                ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+                barHeight = dataArray[i] || 2.5;
+                const hue = (i / dataArray.length) * 360;
+                ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
             }
+
             requestAnimationFrame(animate);
         }
 
+        function playAudio() {
+            audio.play().then(() => {
+                if (!audioContext) {
+                    setupAudio();
+                }
+            }).catch(error => {
+                console.log('Audio play failed:', error);
+            });
+        }
+
+        document.getElementById('playButton').addEventListener('click', () => {
+            playAudio();
+            document.getElementById('playButton').style.display = 'none';
+        });
+
         window.addEventListener('resize', setupCanvas);
         setupCanvas();
-        setupAudio();
     </script>
 
 </body>
