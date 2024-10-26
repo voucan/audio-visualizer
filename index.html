@@ -10,6 +10,11 @@
             padding: 0;
             background-color: black;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: white;
         }
         canvas {
             position: fixed;
@@ -20,10 +25,22 @@
             z-index: -1;
             pointer-events: none;
         }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
     </style>
 </head>
 <body>
 
+    <button id="playButton">Play Audio & Visualizer</button>
     <canvas id="visualizerCanvas"></canvas>
     <audio id="audio" loop>
         <source src="Super%20Ponybeat%20%20Discord%20%5BThe%20Original!%5D%20by%20Eurobeat.mp3" type="audio/mp3">
@@ -79,7 +96,11 @@
             });
         }
 
-        window.addEventListener('load', playAudio);
+        document.getElementById('playButton').addEventListener('click', () => {
+            playAudio();
+            document.getElementById('playButton').style.display = 'none';
+        });
+
         window.addEventListener('resize', setupCanvas);
         setupCanvas();
     </script>
